@@ -1,13 +1,17 @@
 name: golangci-lint
 on:
   push:
+    paths:
+      - '**.go'
+      - 'go.sum'
+      - 'go.mod'
   pull_request:
 permissions:
   contents: read
 
 jobs:
   golangci:
-    name: GO lang CI linter
+    name: golangci linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

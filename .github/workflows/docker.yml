@@ -21,6 +21,14 @@ on:
       - Dockerfile
       - .github/workflows/docker.yml
 
+permissions:
+  actions: write
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   Docker:
     runs-on: ubuntu-latest

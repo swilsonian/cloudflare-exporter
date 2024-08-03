@@ -1,15 +1,13 @@
 FROM golang:alpine AS builder
 
+RUN apk update && apk -U --no-cache add git make build-base ca-certificates && git config --global --add safe.directory '*'=
+
 WORKDIR /app
 
-COPY cloudflare.go cloudflare.go
-COPY main.go main.go
-COPY prometheus.go prometheus.go
-COPY go.mod go.mod
-COPY go.sum go.sum
+COPY . .
 
 RUN go get -d -v
-RUN CGO_ENABLED=0 GOOS=linux go build --ldflags '-w -s -extldflags "-static"' -o cloudflare_exporter .
+RUN make build
 
 FROM alpine:3.20
 
@@ -17,8 +15,6 @@ RUN apk update && apk add ca-certificates curl && rm -rf /var/cache/apk/*
 
 COPY --from=builder /app/cloudflare_exporter cloudflare_exporter
 
-ENV CF_API_KEY=""
-ENV CF_API_EMAIL=""
 ENV LISTEN_ADDRESS=":8080"
 ENTRYPOINT [ "./cloudflare_exporter" ]
 

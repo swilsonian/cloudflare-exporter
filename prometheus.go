@@ -440,7 +440,6 @@ func mustRegisterMetrics(deniedMetrics MetricsSet) {
 	if !deniedMetrics.Has(r2OperationMetricName) {
 		prometheus.MustRegister(r2Operation)
 	}
-
 }
 
 func fetchWorkerAnalytics(account cloudflare.Account, wg *sync.WaitGroup) {
