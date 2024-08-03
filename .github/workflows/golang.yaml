@@ -39,10 +39,10 @@ jobs:
         with:
           go-version-file: go.mod
 
-      - name: Install GolangCI-Lint
-        run: |
-          curl https://github.com/ovh/venom/releases/download/v1.2.0/venom.linux-amd64 -L -o /usr/local/bin/venom && chmod +x /usr/local/bin/venom
-          venom -h
+      - name: Install vemon
+        uses: jaxxstorm/action-install-gh-release@v1.12.0
+        with:
+          repo: ovh/venom
 
       - name: Test
         run: make test

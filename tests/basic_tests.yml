@@ -1,7 +1,7 @@
 name: Cloudflare exporter testsuite
 vars:
   basePort: "8081"
-  baseUrl: "http://host.docker.internal"
+  baseUrl: "http://localhost"
 testcases:
   - name: Check Health endpoint
     steps:
