@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -32,6 +34,9 @@ import (
 
 var (
 	cloudflareAPI *cloudflare.API
+	version       = "DEV"
+	date          = "unknown"
+	versionString = fmt.Sprintf("%s (built %s)", version, date)
 )
 
 func getTargetZones() []string {
@@ -205,12 +210,16 @@ func runExporter() {
 }
 
 func main() {
+	if buildInfo, available := debug.ReadBuildInfo(); available {
+		versionString = fmt.Sprintf("%s (built %s with %s)", version, date, buildInfo.GoVersion)
+	}
 	var cmd = &cobra.Command{
 		Use:   "cloudflare_exporter",
 		Short: "Export Cloudflare metrics to Prometheus",
 		Run: func(_ *cobra.Command, _ []string) {
 			runExporter()
 		},
+		Version: versionString,
 	}
 
 	viper.AutomaticEnv()
