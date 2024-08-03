@@ -6,6 +6,8 @@ on:
       - 'go.sum'
       - 'go.mod'
   pull_request:
+    branches:
+      - master
 permissions:
   contents: read
 

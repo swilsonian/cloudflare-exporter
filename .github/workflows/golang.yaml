@@ -10,13 +10,10 @@ on:
       - '**.go'
       - .github/workflows/golang.yml
       - '.goreleaser.yml'
+      - 'run_e2e.sh'
   pull_request:
     branches:
-      - main
-    paths:
-      - '**.go'
-      - 'go.sum'
-      - 'go.mod'
+      - master
 
 permissions:
   security-events: write
@@ -28,6 +25,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  Test:
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    #if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install GolangCI-Lint
+        run: |
+          curl https://github.com/ovh/venom/releases/download/v1.2.0/venom.linux-amd64 -L -o /usr/local/bin/venom && chmod +x /usr/local/bin/venom
+          venom -h
+
+      - name: Test
+        run: make test
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
   Snapshot:
     runs-on: ubuntu-latest
     env:
@@ -44,12 +65,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-
-      #- name: Test
-      #  run: make test
-
-#      - name: Download AutoComplete file
-#        run: Invoke-WebRequest -Uri https://raw.githubusercontent.com/urfave/cli/v2.25.7/autocomplete/bash_autocomplete -OutFile bash_completion
 
       - name: GoReleaser Action
         uses: goreleaser/goreleaser-action@v6
