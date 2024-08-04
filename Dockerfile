@@ -1,8 +1,9 @@
 FROM golang:alpine AS builder
 
-RUN apk update && apk -U --no-cache add git make build-base ca-certificates && git config --global --add safe.directory '*'=
 
 WORKDIR /app
+
+RUN apk update && apk -U --no-cache add git make build-base ca-certificates && git config --global --add safe.directory '*'
 
 COPY . .
 
