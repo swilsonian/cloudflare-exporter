@@ -11,7 +11,7 @@ export pid=$!
 sleep 5
 
 # Get metrics
-curl -s http://${baseUrl}${metricsPath}
+curl -s -o cloudflare_exporter_test_output http://${baseUrl}${metricsPath}
 
 # Run Tests
 venom run tests/basic_tests.yml

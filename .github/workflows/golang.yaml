@@ -49,6 +49,14 @@ jobs:
         env:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
 
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            cloudflare_exporter_test_output
+            vemon.log
+
   Snapshot:
     runs-on: ubuntu-latest
     env:
