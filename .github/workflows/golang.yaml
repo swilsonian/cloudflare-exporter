@@ -74,6 +74,11 @@ jobs:
         with:
           go-version-file: go.mod
 
+      - name: Install syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          syft version
+
       - name: GoReleaser Action
         uses: goreleaser/goreleaser-action@v6
         with:
