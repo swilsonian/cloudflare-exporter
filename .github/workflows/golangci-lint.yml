@@ -5,6 +5,8 @@ on:
       - '**.go'
       - 'go.sum'
       - 'go.mod'
+    tags-ignore:
+      - "v*"
   pull_request:
     branches:
       - master
