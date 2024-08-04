@@ -6,8 +6,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN go get -d -v
-RUN make build
+RUN go mod download
+ENV GOCACHE=/root/.cache/go-build
+RUN --mount=type=cache,target="/root/.cache/go-build" make build
 
 FROM alpine:3.20
 
