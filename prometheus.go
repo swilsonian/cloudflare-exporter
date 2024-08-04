@@ -72,6 +72,7 @@ var (
 		Name: buildInfoMetricName.String(),
 		Help: "A metric with a constant '1' value labeled by version, revision, branch, and goversion from which the cloudflare_exporter was built.",
 	}, []string{"version", "goversion", "revision"})
+
 	// Requests
 	zoneRequestTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: zoneRequestTotalMetricName.String(),

@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"slices"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/machinebox/graphql"
 	"github.com/nelkinda/health-go"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
@@ -76,15 +78,6 @@ func filterZones(all []cloudflare.Zone, target []string) []cloudflare.Zone {
 	return filtered
 }
 
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
-}
-
 func filterExcludedZones(all []cloudflare.Zone, exclude []string) []cloudflare.Zone {
 	var filtered []cloudflare.Zone
 
@@ -93,7 +86,7 @@ func filterExcludedZones(all []cloudflare.Zone, exclude []string) []cloudflare.Z
 	}
 
 	for _, z := range all {
-		if contains(exclude, z.ID) {
+		if slices.Contains(exclude, z.ID) {
 			log.Info("Exclude zone: ", z.ID, " ", z.Name)
 		} else {
 			filtered = append(filtered, z)
@@ -163,6 +156,8 @@ func runExporter() {
 		log.Fatalf("Error creating Cloudflare API client: %s", err)
 	}
 
+	graphqlClient = graphql.NewClient(cfGraphQLEndpoint)
+
 	if len(viper.GetString("cf_api_token")) > 0 {
 		status, err := cloudflareAPI.VerifyAPIToken(context.Background())
 		if err != nil {
@@ -179,7 +174,7 @@ func runExporter() {
 	if err != nil {
 		log.Fatalf("Error building metrics set: %s", err)
 	}
-	log.Debugf("Metrics set: %v", metricsSet)
+
 	mustRegisterMetrics(metricsSet)
 
 	go func() {
@@ -200,7 +195,10 @@ func runExporter() {
 	}
 
 	http.Handle(cfgMetricsPath, promhttp.Handler())
-	h := health.New(health.Health{})
+	h := health.New(health.Health{
+		ReleaseID: version,
+		Version:   versionString,
+	})
 	http.HandleFunc("/health", h.Handler)
 
 	log.Info("Beginning to serve metrics on ", viper.GetString("listen"), cfgMetricsPath)
@@ -255,7 +253,7 @@ func main() {
 	viper.BindEnv("cf_exclude_zones")
 	viper.SetDefault("cf_exclude_zones", "")
 
-	flags.Int("scrape_delay", 300, "scrape delay in seconds0")
+	flags.Int("scrape_delay", 300, "scrape delay in seconds")
 	viper.BindEnv("scrape_delay")
 	viper.SetDefault("scrape_delay", 300)
 

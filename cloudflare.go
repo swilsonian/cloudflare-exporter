@@ -15,6 +15,10 @@ const (
 	cfGraphQLEndpoint = "https://api.cloudflare.com/client/v4/graphql/"
 )
 
+var (
+	graphqlClient *graphql.Client
+)
+
 type cloudflareResponse struct {
 	Viewer struct {
 		Zones []zoneResp `json:"zones"`
@@ -309,9 +313,9 @@ func fetchFirewallRules(zoneID string) map[string]string {
 	}
 	for _, rulesetDesc := range listOfRulesets {
 		if rulesetDesc.Phase == "http_request_firewall_managed" {
-			ruleset, err := cloudflareAPI.GetRuleset(ctx, cloudflare.ZoneIdentifier(zoneID), rulesetDesc.ID)
-			if err != nil {
-				log.Fatalf("Error fetching ruleset: %s", err)
+			ruleset, ruleGetErr := cloudflareAPI.GetRuleset(ctx, cloudflare.ZoneIdentifier(zoneID), rulesetDesc.ID)
+			if ruleGetErr != nil {
+				log.Fatalf("Error fetching ruleset: %s", ruleGetErr)
 			}
 			for _, rule := range ruleset.Rules {
 				firewallRulesMap[rule.ID] = rule.Description
@@ -447,7 +451,6 @@ query ($zoneIDs: [String!], $mintime: Time!, $maxtime: Time!, $limit: Int!) {
 	request.Var("zoneIDs", zoneIDs)
 
 	ctx := context.Background()
-	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
 
 	var resp cloudflareResponse
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
@@ -503,7 +506,6 @@ func fetchColoTotals(zoneIDs []string) (*cloudflareResponseColo, error) {
 	request.Var("zoneIDs", zoneIDs)
 
 	ctx := context.Background()
-	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
 	var resp cloudflareResponseColo
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
 		log.Error(err)
@@ -563,7 +565,6 @@ func fetchWorkerTotals(accountID string) (*cloudflareResponseAccts, error) {
 	request.Var("accountID", accountID)
 
 	ctx := context.Background()
-	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
 	var resp cloudflareResponseAccts
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
 		log.Errorf("Error fetching worker totals: %s", err)
@@ -640,7 +641,6 @@ func fetchLoadBalancerTotals(zoneIDs []string) (*cloudflareResponseLb, error) {
 	request.Var("zoneIDs", zoneIDs)
 
 	ctx := context.Background()
-	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
 	var resp cloudflareResponseLb
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
 		log.Errorf("Error fetching load balancer totals: %s", err)
@@ -692,7 +692,6 @@ func fetchLogpushAccount(accountID string) (*cloudflareResponseLogpushAccount, e
 	request.Var("mintime", now1mAgo)
 
 	ctx := context.Background()
-	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
 	var resp cloudflareResponseLogpushAccount
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
 		log.Errorf("Error fetching logpush account totals: %s", err)
@@ -744,7 +743,6 @@ func fetchLogpushZone(zoneIDs []string) (*cloudflareResponseLogpushZone, error) 
 	request.Var("mintime", now1mAgo)
 
 	ctx := context.Background()
-	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
 	var resp cloudflareResponseLogpushZone
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
 		log.Errorf("Error fetching logpush zone totals: %s", err)
@@ -802,7 +800,6 @@ func fetchR2Account(accountID string) (*cloudflareResponseR2Account, error) {
 	request.Var("date", now.Format("2006-01-02"))
 
 	ctx := context.Background()
-	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
 	var resp cloudflareResponseR2Account
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
 		log.Errorf("Error fetching R2 account: %s", err)
