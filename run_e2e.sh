@@ -1,5 +1,4 @@
 #!/bin/bash
-set -xe
 export basePort="8081"
 export metricsPath='/metrics'
 export baseUrl="localhost:${basePort}"

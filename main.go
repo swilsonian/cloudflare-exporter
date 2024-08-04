@@ -187,6 +187,11 @@ func runExporter() {
 			go fetchMetrics()
 		}
 	}()
+	goVersion := ""
+	if goBuildInfo, available := debug.ReadBuildInfo(); available {
+		goVersion = goBuildInfo.GoVersion
+	}
+	buildInfoMetric(version, goVersion, date)
 
 	// This section will start the HTTP server and expose
 	// any metrics on the /metrics endpoint.
@@ -209,8 +214,8 @@ func runExporter() {
 }
 
 func main() {
-	if buildInfo, available := debug.ReadBuildInfo(); available {
-		versionString = fmt.Sprintf("%s (built %s with %s)", version, date, buildInfo.GoVersion)
+	if goBuildInfo, available := debug.ReadBuildInfo(); available {
+		versionString = fmt.Sprintf("%s (built %s with %s)", version, date, goBuildInfo.GoVersion)
 	}
 	var cmd = &cobra.Command{
 		Use:   "cloudflare_exporter",

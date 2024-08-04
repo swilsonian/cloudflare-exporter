@@ -42,7 +42,7 @@ jobs:
       - name: Install Vemon
         run: |
           curl https://github.com/ovh/venom/releases/download/v1.2.0/venom.linux-amd64 -L -o /usr/local/bin/venom && chmod +x /usr/local/bin/venom
-          venom -h
+          venom version
 
       - name: Test
         run: make test
