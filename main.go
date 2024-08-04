@@ -174,7 +174,7 @@ func runExporter() {
 	if err != nil {
 		log.Fatalf("Error building metrics set: %s", err)
 	}
-	//log.Debugf("Metrics set: %v", metricsSet)
+
 	mustRegisterMetrics(metricsSet)
 
 	go func() {
