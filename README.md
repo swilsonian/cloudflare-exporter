@@ -108,7 +108,6 @@ Note: `ZONE_<name>` configuration is not supported as flag.
 # HELP cloudflare_logpush_failed_jobs_zone_count Number of failed logpush jobs on the zone level
 # HELP cloudflare_r2_operation_count Number of operations performed by R2
 # HELP cloudflare_r2_storage_bytes Storage used by R2
-# HELP cloudflare_r2_storage_total_bytes Total storage used by R2
 ```
 
 ## Helm chart repository
