@@ -803,7 +803,6 @@ func fetchR2Account(accountID string) (*cloudflareResponseR2Account, error) {
 
 	ctx := context.Background()
 	graphqlClient := graphql.NewClient(cfGraphQLEndpoint)
-	graphqlClient.Log = func(s string) { log.Debug(s) }
 	var resp cloudflareResponseR2Account
 	if err := graphqlClient.Run(ctx, request, &resp); err != nil {
 		log.Errorf("Error fetching R2 account: %s", err)

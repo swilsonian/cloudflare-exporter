@@ -108,20 +108,24 @@ Note: `ZONE_<name>` configuration is not supported as flag.
 # HELP cloudflare_logpush_failed_jobs_zone_count Number of failed logpush jobs on the zone level
 # HELP cloudflare_r2_operation_count Number of operations performed by R2
 # HELP cloudflare_r2_storage_bytes Storage used by R2
-# HELP cloudflare_r2_storage_total_bytes Total storage used by R2
 ```
 
-## Helm chart repository
-To deploy the exporter into Kubernetes, we recommend using our manager Helm repository:
+[//]: # (## Helm chart repository)
 
-```
-helm repo add cloudflare-exporter https://lablabs.github.io/cloudflare-exporter/
-helm install cloudflare-exporter/cloudflare-exporter
-```
+[//]: # (To deploy the exporter into Kubernetes, we recommend using our manager Helm repository:)
+
+[//]: # ()
+[//]: # (```)
+
+[//]: # (helm repo add cloudflare-exporter https://lablabs.github.io/cloudflare-exporter/)
+
+[//]: # (helm install cloudflare-exporter/cloudflare-exporter)
+
+[//]: # (```)
 
 ## Docker
 ### Build
-Images are available at [Github Container Registry](https://github.com/lablabs/cloudflare-exporter/pkgs/container/cloudflare_exporter)
+Images are available at [Github Container Registry](https://github.com/Cyb3r-Jak3/cloudflare-exporter/pkgs/container/cloudflare_exporter)
 
 ```
 docker build -t ghcr.io/Cyb3r-Jak3/cloudflare_exporter .
@@ -150,7 +154,7 @@ docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} -e FREE_TIER=true g
 
 Access help:
 ```
-docker run --rm -p 8080:8080 -i ghcr.io/lablabs/cloudflare_exporter --help
+docker run --rm -p 8080:8080 -i ghcr.io/Cyb3r-Jak3/cloudflare_exporter --help
 ```
 
 ## Contributing and reporting issues
