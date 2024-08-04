@@ -8,11 +8,18 @@ Forked from [cloudflare-exporter](https://github.com/lablabs/cloudflare-exporter
 Prometheus exporter exposing Cloudflare Analytics dashboard data on a per-zone basis, as well as Worker, and R2 metrics.
 The exporter is also able to scrape Zone metrics by Colocations (https://www.cloudflare.com/network/).
 
-## Grafana Dashboard
+## Grafana Dashboards
+
+#### Zone Analytics Dashboard
 ![Dashboard](https://i.ibb.co/HDsqDF1/cf-exporter.png)
 
 Lablabs public dashboard is available at https://grafana.com/grafana/dashboards/13133
 
+#### R2 Dashboard
+
+![Dashboard](https://r2-sharex.cyberjake.xyz/file/2024/08/firefox_XGwfzmYHqe.png)
+
+R2 metrics is available at https://grafana.com/grafana/dashboards/21636
 
 ## Authentication
 Authentication towards the Cloudflare API can be done in two ways:
@@ -55,7 +62,6 @@ The exporter can be configured using env variables or command flags.
 | `SCRAPE_DELAY` | scrape delay in seconds, default `300` |
 | `CF_BATCH_SIZE` | cloudflare request zones batch size (1 - 10), default `10` |
 | `METRICS_DENYLIST` | (Optional) cloudflare-exporter metrics to not export, comma delimited list of cloudflare-exporter metrics. If not set, all metrics are exported |
-| `ZONE_<NAME>` |  `DEPRECATED since 0.0.5` (optional) Zone ID. Add zones you want to scrape by adding env vars in this format. You can find the zone ids in Cloudflare dashboards. |
 
 Corresponding flags:
 ```
@@ -110,22 +116,9 @@ Note: `ZONE_<name>` configuration is not supported as flag.
 # HELP cloudflare_r2_storage_bytes Storage used by R2
 ```
 
-[//]: # (## Helm chart repository)
-
-[//]: # (To deploy the exporter into Kubernetes, we recommend using our manager Helm repository:)
-
-[//]: # ()
-[//]: # (```)
-
-[//]: # (helm repo add cloudflare-exporter https://lablabs.github.io/cloudflare-exporter/)
-
-[//]: # (helm install cloudflare-exporter/cloudflare-exporter)
-
-[//]: # (```)
-
 ## Docker
 ### Build
-Images are available at [Github Container Registry](https://github.com/Cyb3r-Jak3/cloudflare-exporter/pkgs/container/cloudflare_exporter)
+Images are available at [GitHub Container Registry](https://github.com/Cyb3r-Jak3/cloudflare-exporter/pkgs/container/cloudflare_exporter)
 
 ```
 docker build -t ghcr.io/Cyb3r-Jak3/cloudflare_exporter .
