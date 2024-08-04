@@ -76,11 +76,9 @@ blobs:
 
 nfpms:
   -
-    package_name: cloudflare-utils
+    package_name: cloudflare-exporter
 
     vendor: Cyb3rJak3
-
-    homepage: https://cloudflare-utils.cyberjake.xyz/
 
     maintainer: Cyb3rJak3 <git@cyberjake.xyz>
 
@@ -118,3 +116,21 @@ nfpms:
         dst: /usr/share/doc/{{ .ProjectName }}/README.md
 #      - src: bash_completion
 #        dst: /etc/bash_completion.d/{{ .ProjectName }}
+
+
+signs:
+  - artifacts: all
+    args:
+      - "--batch"
+      - "--local-user"
+      - "{{ .Env.GPG_FINGERPRINT }}"
+      - "--output"
+      - "${signature}"
+      - "--detach-sign"
+      - "${artifact}"
+
+sboms:
+  - artifacts: archive
+
+release:
+  draft: true
