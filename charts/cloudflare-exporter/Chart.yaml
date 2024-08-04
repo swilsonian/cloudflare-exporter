@@ -2,7 +2,7 @@ apiVersion: v2
 name: cloudflare-exporter
 version: 0.2.1
 appVersion: 0.0.16
-home: https://github.com/lablabs/cloudflare-exporter
+home: https://github.com/Cyb3r-Jak3/cloudflare-exporter
 description: A Helm chart for cloudflare exporter
 icon: https://www.cloudflare.com/img/logo-web-badges/cf-logo-on-white-bg.svg
 keywords:
@@ -10,7 +10,7 @@ keywords:
   - cloudflare
   - monitoring
 sources:
-  - https://github.com/lablabs/cloudflare-exporter
+  - https://github.com/Cyb3r-Jak3/cloudflare-exporter
 maintainers:
   - name: martinhaus
   - name: haad

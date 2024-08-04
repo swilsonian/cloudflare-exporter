@@ -1,0 +1,89 @@
+name: Go Checks
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'go.sum'
+      - 'go.mod'
+      - '**.go'
+      - .github/workflows/golang.yml
+      - '.goreleaser.yml'
+      - 'run_e2e.sh'
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  security-events: write
+  actions: write
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install Vemon
+        run: |
+          curl https://github.com/ovh/venom/releases/download/v1.2.0/venom.linux-amd64 -L -o /usr/local/bin/venom && chmod +x /usr/local/bin/venom
+          venom version
+
+      - name: Test
+        run: make test
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            cloudflare_exporter_test_output
+            vemon.log
+
+  Snapshot:
+    runs-on: ubuntu-latest
+    env:
+      GO111MODULE: on
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: GoReleaser Action
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: '~> v2'
+          args: --snapshot --clean --skip=publish,sign
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-exporter
+          path: dist/*

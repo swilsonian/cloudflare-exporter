@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"runtime/debug"
 	"strings"
 	"sync"
 	"time"
@@ -32,6 +34,9 @@ import (
 
 var (
 	cloudflareAPI *cloudflare.API
+	version       = "DEV"
+	date          = "unknown"
+	versionString = fmt.Sprintf("%s (built %s)", version, date)
 )
 
 func getTargetZones() []string {
@@ -151,7 +156,6 @@ func runExporter() {
 
 	if len(viper.GetString("cf_api_token")) > 0 {
 		cloudflareAPI, err = cloudflare.NewWithAPIToken(viper.GetString("cf_api_token"))
-
 	} else {
 		cloudflareAPI, err = cloudflare.New(viper.GetString("cf_api_key"), viper.GetString("cf_api_email"))
 	}
@@ -183,6 +187,11 @@ func runExporter() {
 			go fetchMetrics()
 		}
 	}()
+	goVersion := ""
+	if goBuildInfo, available := debug.ReadBuildInfo(); available {
+		goVersion = goBuildInfo.GoVersion
+	}
+	buildInfoMetric(version, goVersion, date)
 
 	// This section will start the HTTP server and expose
 	// any metrics on the /metrics endpoint.
@@ -205,12 +214,16 @@ func runExporter() {
 }
 
 func main() {
+	if goBuildInfo, available := debug.ReadBuildInfo(); available {
+		versionString = fmt.Sprintf("%s (built %s with %s)", version, date, goBuildInfo.GoVersion)
+	}
 	var cmd = &cobra.Command{
 		Use:   "cloudflare_exporter",
 		Short: "Export Cloudflare metrics to Prometheus",
 		Run: func(_ *cobra.Command, _ []string) {
 			runExporter()
 		},
+		Version: versionString,
 	}
 
 	viper.AutomaticEnv()

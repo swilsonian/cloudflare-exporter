@@ -1,0 +1,120 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+
+# The lines below are called `modelines`. See `:help modeline`
+# Feel free to remove those if you don't want/need to use them.
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
+version: 2
+project_name: cloudflare-exporter
+
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+      - freebsd
+      - netbsd
+      - solaris
+    goarch:
+      - amd64
+      - arm
+      - arm64
+      - '386'
+      - s390x
+      - ppc64le
+      - riscv64
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.date={{.Date}}'
+      - -extldflags "-static"
+
+archives:
+  - format: tar.gz
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+      {{- if .Arm }}v{{ .Arm }}{{ end }}
+    # use zip for windows archives
+    format_overrides:
+      - goos: windows
+        format: zip
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Version }}-snapshot-{{ .ShortCommit }}"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"
+
+blobs:
+  - provider: s3
+    region: auto
+    endpoint: https://8be772befd147a8df540aae0fa15c047.r2.cloudflarestorage.com
+    bucket: public-files
+
+nfpms:
+  -
+    package_name: cloudflare-utils
+
+    vendor: Cyb3rJak3
+
+    homepage: https://cloudflare-utils.cyberjake.xyz/
+
+    maintainer: Cyb3rJak3 <git@cyberjake.xyz>
+
+    description:
+      Prometheus exporter exposing Cloudflare Analytics dashboard data on a per-zone basis, as well as Worker, and R2 metrics.
+
+    license: Apache 2.0
+
+    formats:
+      - apk
+      - deb
+      - rpm
+
+    provides:
+      - cloudflare-exporter
+
+    section: default
+
+    priority: extra
+
+    # Changelog YAML file, see: https://github.com/goreleaser/chglog
+    #
+    # You can use goreleaser/chglog to create the changelog for your project,
+    # pass that changelog yaml file to GoReleaser,
+    # and it should in turn setup it accordingly for the given available
+    # formats (deb and rpm at the moment).
+    #
+    # Experimental.
+    # Since: v1.11
+    #    changelog: ./foo.yml
+    contents:
+      - src: LICENSE
+        dst: /usr/share/licenses/{{ .ProjectName }}/LICENSE.md
+      - src: README.md
+        dst: /usr/share/doc/{{ .ProjectName }}/README.md
+#      - src: bash_completion
+#        dst: /etc/bash_completion.d/{{ .ProjectName }}

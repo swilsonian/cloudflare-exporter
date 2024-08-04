@@ -1,18 +1,17 @@
-# CloudFlare Prometheus exporter
-[<img src="ll-logo.png">](https://lablabs.io/)
+# Cloudflare Prometheus exporter
 
-We help companies build, run, deploy and scale software and infrastructure by embracing the right technologies and principles. Check out our website at https://lablabs.io/
+Forked from [cloudflare-exporter](https://github.com/lablabs/cloudflare-exporter)
 
 ---
 
 ## Description
-Prometheus exporter exposing Cloudflare Analytics dashboard data on a per-zone basis, as well as Worker metrics.
+Prometheus exporter exposing Cloudflare Analytics dashboard data on a per-zone basis, as well as Worker, and R2 metrics.
 The exporter is also able to scrape Zone metrics by Colocations (https://www.cloudflare.com/network/).
 
 ## Grafana Dashboard
 ![Dashboard](https://i.ibb.co/HDsqDF1/cf-exporter.png)
 
-Our public dashboard is available at https://grafana.com/grafana/dashboards/13133
+Lablabs public dashboard is available at https://grafana.com/grafana/dashboards/13133
 
 
 ## Authentication
@@ -77,6 +76,7 @@ Note: `ZONE_<name>` configuration is not supported as flag.
 
 ## List of available metrics
 ```
+# HELP cloudflare_exporter_build_info A metric with a constant '1' value labeled by version, revision, branch, and goversion from which cloudflare_exporter was built.
 # HELP cloudflare_worker_cpu_time CPU time quantiles by script name
 # HELP cloudflare_worker_duration Duration quantiles by script name (GB*s)
 # HELP cloudflare_worker_errors_count Number of errors by script name
@@ -124,28 +124,28 @@ helm install cloudflare-exporter/cloudflare-exporter
 Images are available at [Github Container Registry](https://github.com/lablabs/cloudflare-exporter/pkgs/container/cloudflare_exporter)
 
 ```
-docker build -t ghcr.io/lablabs/cloudflare_exporter .
+docker build -t ghcr.io/Cyb3r-Jak3/cloudflare_exporter .
 ```
 
 ### Run
 Authenticating with email + API key:
 ```
-docker run --rm -p 8080:8080 -e CF_API_KEY=${CF_API_KEY} -e CF_API_EMAIL=${CF_API_EMAIL} ghcr.io/lablabs/cloudflare_exporter
+docker run --rm -p 8080:8080 -e CF_API_KEY=${CF_API_KEY} -e CF_API_EMAIL=${CF_API_EMAIL} ghcr.io/Cyb3r-Jak3/cloudflare_exporter
 ```
 
 API token:
 ```
-docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} ghcr.io/lablabs/cloudflare_exporter
+docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} ghcr.io/Cyb3r-Jak3/cloudflare_exporter
 ```
 
 Configure zones and listening port:
 ```
-docker run --rm -p 8080:8081 -e CF_API_TOKEN=${CF_API_TOKEN} -e CF_ZONES=zoneid1,zoneid2,zoneid3 -e LISTEN=:8081 ghcr.io/lablabs/cloudflare_exporter
+docker run --rm -p 8080:8081 -e CF_API_TOKEN=${CF_API_TOKEN} -e CF_ZONES=zoneid1,zoneid2,zoneid3 -e LISTEN=:8081 ghcr.io/Cyb3r-Jak3/cloudflare_exporter
 ```
 
 Disable non-free metrics:
 ```
-docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} -e FREE_TIER=true ghcr.io/lablabs/cloudflare_exporter
+docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} -e FREE_TIER=true ghcr.io/Cyb3r-Jak3/cloudflare_exporter
 ```
 
 Access help:

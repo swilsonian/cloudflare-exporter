@@ -19,6 +19,7 @@ func (mn MetricName) String() string {
 }
 
 const (
+	buildInfoMetricName                          MetricName = "cloudflare_exporter_build_info"
 	zoneRequestTotalMetricName                   MetricName = "cloudflare_zone_requests_total"
 	zoneRequestCachedMetricName                  MetricName = "cloudflare_zone_requests_cached"
 	zoneRequestSSLEncryptedMetricName            MetricName = "cloudflare_zone_requests_ssl_encrypted"
@@ -68,6 +69,10 @@ func (ms MetricsSet) Add(mn MetricName) {
 }
 
 var (
+	buildInfo = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Name: buildInfoMetricName.String(),
+		Help: "A metric with a constant '1' value labeled by version, revision, branch, and goversion from which the cloudflare_exporter was built.",
+	}, []string{"version", "goversion", "revision"})
 	// Requests
 	zoneRequestTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: zoneRequestTotalMetricName.String(),
@@ -318,6 +323,7 @@ func buildAllMetricsSet() MetricsSet {
 	allMetricsSet.Add(logpushFailedJobsZoneMetricName)
 	allMetricsSet.Add(r2StorageTotalMetricName)
 	allMetricsSet.Add(r2OperationMetricName)
+	allMetricsSet.Add(r2StorageMetricName)
 	return allMetricsSet
 }
 
@@ -440,7 +446,13 @@ func mustRegisterMetrics(deniedMetrics MetricsSet) {
 	if !deniedMetrics.Has(r2OperationMetricName) {
 		prometheus.MustRegister(r2Operation)
 	}
+	if !deniedMetrics.Has(buildInfoMetricName) {
+		prometheus.MustRegister(buildInfo)
+	}
+}
 
+func buildInfoMetric(version string, goVersion string, revision string) {
+	buildInfo.WithLabelValues(version, goVersion, revision).Set(1)
 }
 
 func fetchWorkerAnalytics(account cloudflare.Account, wg *sync.WaitGroup) {

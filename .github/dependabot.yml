@@ -5,9 +5,18 @@ updates:
     schedule:
       interval: "weekly"
     reviewers:
-      - "Shopify/infrasec"
+      - "Cyb3r-Jak3"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      # Check for updates to GitHub Actions every week
       interval: "weekly"
+    reviewers:
+        - "Cyb3r-Jak3"
+
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    reviewers:
+      - "Cyb3r-Jak3"
