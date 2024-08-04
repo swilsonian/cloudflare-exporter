@@ -67,7 +67,7 @@ Corresponding flags:
 ```
   -cf_api_email="": cloudflare api email, works with api_key flag
   -cf_api_key="": cloudflare api key, works with api_email flag
-  -cf_api_token="": cloudflare api token (version 0.0.5+, preferred)
+  -cf_api_token="": cloudflare api token
   -cf_zones="": cloudflare zones to export, comma delimited list
   -cf_exclude_zones="": cloudflare zones to exclude, comma delimited list
   -free_tier=false: scrape only metrics included in free plan, default false
@@ -77,8 +77,6 @@ Corresponding flags:
   -cf_batch_size=10: cloudflare zones batch size (1-10)
   -metrics_denylist="": cloudflare-exporter metrics to not export, comma delimited list
 ```
-
-Note: `ZONE_<name>` configuration is not supported as flag.
 
 ## List of available metrics
 ```
