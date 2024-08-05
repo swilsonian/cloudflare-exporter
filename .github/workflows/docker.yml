@@ -91,6 +91,7 @@ jobs:
           username: cyb3rjak3
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: cyb3rjak3/cloudflare-exporter
+          readme-filepath: checkout/README.md
 
       - name: GitHub Container Attestation
         uses: actions/attest-build-provenance@v1
