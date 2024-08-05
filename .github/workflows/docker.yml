@@ -66,15 +66,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          path: checkout
 
       - name: Build
         uses: docker/build-push-action@v6
         with:
+          context: checkout
           push: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') }}
           platforms: linux/amd64, linux/arm64, linux/arm/v7, linux/386
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          file: Dockerfile
           cache-from: type=gha
           cache-to: type=gha,mode=max
           sbom: true
