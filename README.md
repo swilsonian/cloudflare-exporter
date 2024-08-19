@@ -116,36 +116,36 @@ Corresponding flags:
 
 ## Docker
 ### Build
-Images are available at [GitHub Container Registry](https://github.com/Cyb3r-Jak3/cloudflare-exporter/pkgs/container/cloudflare_exporter)
+Images are available at [GitHub Container Registry](https://github.com/swilsonian/cloudflare-exporter/pkgs/container/cloudflare_exporter)
 
 ```
-docker build -t ghcr.io/Cyb3r-Jak3/cloudflare_exporter .
+docker build -t ghcr.io/swilsonian/cloudflare_exporter .
 ```
 
 ### Run
 Authenticating with email + API key:
 ```
-docker run --rm -p 8080:8080 -e CF_API_KEY=${CF_API_KEY} -e CF_API_EMAIL=${CF_API_EMAIL} ghcr.io/Cyb3r-Jak3/cloudflare_exporter
+docker run -d -p 8080:8080 -e CF_API_KEY=${CF_API_KEY} -e CF_API_EMAIL=${CF_API_EMAIL}  --name "cloudflare_exporter" ghcr.io/swilsonian/cloudflare_exporter
 ```
 
 API token:
 ```
-docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} ghcr.io/Cyb3r-Jak3/cloudflare_exporter
+docker run -d -p 8080:8080 -e "CF_API_TOKEN=${CF_API_KEY}" --name "cloudflare_exporter" ghcr.io/swilsonian/cloudflare_exporter
 ```
 
 Configure zones and listening port:
 ```
-docker run --rm -p 8080:8081 -e CF_API_TOKEN=${CF_API_TOKEN} -e CF_ZONES=zoneid1,zoneid2,zoneid3 -e LISTEN=:8081 ghcr.io/Cyb3r-Jak3/cloudflare_exporter
+docker run --rm -p 8080:8081 -e CF_API_TOKEN=${CF_API_TOKEN} -e CF_ZONES=zoneid1,zoneid2,zoneid3 -e LISTEN=:8081 ghcr.io/swilsonian/cloudflare_exporter
 ```
 
 Disable non-free metrics:
 ```
-docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} -e FREE_TIER=true ghcr.io/Cyb3r-Jak3/cloudflare_exporter
+docker run --rm -p 8080:8080 -e CF_API_TOKEN=${CF_API_TOKEN} -e FREE_TIER=true ghcr.io/swilsonian/cloudflare_exporter
 ```
 
 Access help:
 ```
-docker run --rm -p 8080:8080 -i ghcr.io/Cyb3r-Jak3/cloudflare_exporter --help
+docker run --rm -p 8080:8080 -i ghcr.io/swilsonian/cloudflare_exporter --help
 ```
 
 ## Contributing and reporting issues
