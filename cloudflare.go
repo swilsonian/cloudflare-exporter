@@ -53,6 +53,7 @@ type r2AccountResp struct {
 	R2StorageGroups []struct {
 		Dimensions struct {
 			BucketName string `json:"bucketName"`
+			Time string `json:"time"`
 		} `json:"dimensions"`
 		Max struct {
 			MetadataSize uint64 `json:"metadataSize"`
@@ -65,6 +66,7 @@ type r2AccountResp struct {
 		Dimensions struct {
 			Action     string `json:"actionType"`
 			BucketName string `json:"bucketName"`
+			Time string `json:"time"`
 		} `json:"dimensions"`
 		Sum struct {
 			Requests uint64 `json:"requests"`
@@ -754,19 +756,24 @@ func fetchLogpushZone(zoneIDs []string) (*cloudflareResponseLogpushZone, error) 
 
 func fetchR2Account(accountID string) (*cloudflareResponseR2Account, error) {
 	now := time.Now().Add(-time.Duration(viper.GetInt("scrape_delay")) * time.Second).UTC()
+	// log.Debugf("Current Time: %s", now)
+
+	now = now.Add(-time.Duration(1) * time.Hour)
 	s := 60 * time.Second
 	now = now.Truncate(s)
+	// log.Debugf("Current Time minus an hour: %s", now)
 
 	request := graphql.NewRequest(`query($accountID: String!, $limit: Int!, $date: String!) {
 		viewer {
 		  accounts(filter: {accountTag : $accountID }) {
 			r2StorageAdaptiveGroups(
 			  filter: {
-				date: $date
+				datetimeHour: $date
 			  },
 			  limit: $limit
 			) {
 			  dimensions {
+			  	time:datetimeHour
           		bucketName
 			  }
         	  max {
@@ -775,8 +782,12 @@ func fetchR2Account(accountID string) (*cloudflareResponseR2Account, error) {
 				objectCount
 			  }
       		}
-			r2OperationsAdaptiveGroups(filter: { date: $date }, limit: $limit) {
+			r2OperationsAdaptiveGroups(
+				filter: { datetimeHour: $date }, 
+				limit: $limit
+			) {
 				dimensions {
+					time:datetimeHour
 					actionType
 					bucketName
 				}
@@ -786,7 +797,7 @@ func fetchR2Account(accountID string) (*cloudflareResponseR2Account, error) {
 			}
 			}
 		  }
-	  }`)
+	  }`) 
 
 	if len(viper.GetString("cf_api_token")) > 0 {
 		request.Header.Set("Authorization", "Bearer "+viper.GetString("cf_api_token"))
@@ -797,7 +808,9 @@ func fetchR2Account(accountID string) (*cloudflareResponseR2Account, error) {
 
 	request.Var("accountID", accountID)
 	request.Var("limit", 9999)
-	request.Var("date", now.Format("2006-01-02"))
+	request.Var("date", now.Format("2006-01-02T15:00:00Z"))
+
+	// log.Debugf("Request Time: %s", now.Format("2006-01-02T15:00:00Z"))
 
 	ctx := context.Background()
 	var resp cloudflareResponseR2Account
