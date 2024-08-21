@@ -269,9 +269,9 @@ func main() {
 	viper.BindEnv("metrics_denylist")
 	viper.SetDefault("metrics_denylist", "")
 
-	flags.String("log_level", "info", "log level")
+	flags.String("log_level", "debug", "log level")
 	viper.BindEnv("log_level")
-	viper.SetDefault("log_level", "info")
+	viper.SetDefault("log_level", "debug")
 
 	viper.BindPFlags(flags)
 	cmd.Execute()
